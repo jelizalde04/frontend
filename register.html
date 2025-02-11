@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - DelisHub</title>
+    <!-- Agregar Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Agregar fuentes personalizadas (Google Fonts) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo general de la página */
+        body {
+            background-color: #f9f9f9;
+            font-family: 'Poppins', sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            padding: 20px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .card-body {
+            padding: 40px;
+        }
+        .card-title {
+            font-weight: 600;
+            font-size: 28px;
+            color: #333;
+        }
+        .form-control {
+            border-radius: 30px;
+            padding: 12px 15px;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #4caf50;
+            border-color: #4caf50;
+            border-radius: 30px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+        .alert {
+            text-align: center;
+            font-weight: 500;
+        }
+        .text-muted {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #888;
+            margin-top: 20px;
+        }
+        .footer a {
+            text-decoration: none;
+            color: #4caf50;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Tarjeta de registro -->
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center">Regístrate en DelisHub</h3>
+                <p class="text-muted text-center mb-4">¡Bienvenido! Únete a la comunidad y empieza a disfrutar.</p>
+
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Nombre de usuario</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                </form>
+
+                <!-- Mensaje de respuesta -->
+                <div id="responseMessage" class="mt-3"></div>
+            </div>
+        </div>
+
+        <!-- Pie de página -->
+        <div class="footer">
+            <p>¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+        </div>
+    </div>
+
+    <!-- Agregar Bootstrap JS y Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+            event.preventDefault();  // Previene el comportamiento por defecto del formulario
+
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            // Prepara los datos para enviar
+            const userData = {
+                username: username,
+                email: email,
+                password: password
+            };
+
+            // Realiza la solicitud POST a la API
+            fetch('http://35.170.192.34:3001/api/register', {  // Actualizado con la nueva IP
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageElement = document.getElementById("responseMessage");
+                // Verifica si la respuesta del backend es un registro exitoso
+                if (data.message === "User registered successfully") {
+                    messageElement.innerHTML = `<div class="alert alert-success" role="alert">¡Usuario registrado con éxito!</div>`;
+                    // Redirige después de 4 segundos al login
+                    setTimeout(function() {
+                        window.location.href = "login.html";
+                    }, 4000);  // Redirige después de 4 segundos
+                } else {
+                    messageElement.innerHTML = `<div class="alert alert-danger" role="alert">Error: ${data.message}</div>`;
+                }
+            })
+            .catch(error => {
+                const messageElement = document.getElementById("responseMessage");
+                messageElement.innerHTML = `<div class="alert alert-danger" role="alert">Error en la solicitud: ${error.message}</div>`;
+            });
+        });
+    </script>
+</body>
+</html>
